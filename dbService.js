@@ -16,3 +16,10 @@ connection.connect((err) => {
 
 //the DbService class will provide the different methods for data manipulation
 
+class DbService {
+  static getDbServiceInstance
+
+
+}
+
+module.exports = DbService;

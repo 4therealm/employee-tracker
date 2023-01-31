@@ -4,6 +4,7 @@ const path = require('path');
 const app = express(); 
 const PORT = 3001;
 
+const dbService = require('./dbService')
 // Here we tell Express where our folder is for static assets
 app.use(express.static('public'));
 
