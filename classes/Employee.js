@@ -4,14 +4,12 @@ THEN I am presented with a formatted table showing employee data, including empl
 */
 
 class Employee {
-  constructor ( id, firstName, lastName, jobTitle, department, salary, reportsTo ) {
+  constructor ( id, firstName, lastName, department, role) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.jobTitle = jobTitle;
     this.department = department;
-    this.salary = salary;
-    this.reportsTo = reportsTo
+    this.role = role;
     
   }
   getName () {
@@ -20,8 +18,8 @@ class Employee {
   getId () {
     return this.id;
   }
-  getEmail () {
-    return this.email;
+  getDepartment () {
+    return this.department;
   }
   getRole(){
     return this.constructor.name;
