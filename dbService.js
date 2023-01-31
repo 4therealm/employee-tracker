@@ -1,11 +1,11 @@
 const mysql = require('mysql2')
 
 const connection = mysql.createConnection({
-  host: process.env.HOST,
-  user: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
-  port: process.env.DB_PORT
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "employee_tracker",
+  port: 3306
 })
 
 connection.connect((err) => {
@@ -17,7 +17,30 @@ connection.connect((err) => {
 //the DbService class will provide the different methods for data manipulation
 
 class DbService {
-  static getDbServiceInstance
+  static getDbServiceInstance(){
+    return instance ? instance : new DbService();
+  }
+
+//async class methods
+
+  async getDepartment(){
+    try{
+      const response = await new Promise((resolve, reject) => {
+        const query = "SELECT * FROM department";
+
+        connection.query(query, (err, results) => {
+          if (err) reject(new Error(err.message))
+          resolve(results)  
+        })
+      });
+
+      return response;
+    } catch (error){
+      console.log("🚀 ~ file: dbService.js:39 ~ DbService ~ getAllData ~ error", error)
+      
+    }
+  }
+
 
 
 }
