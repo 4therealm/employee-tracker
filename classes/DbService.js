@@ -1,5 +1,4 @@
 const mysql = require('mysql2')
-
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -8,11 +7,8 @@ const connection = mysql.createConnection({
   port: 3306
 })
 
-connection.connect((err) => {
-  if (err) {
-      console.log(err.message)
-  }
-})
+
+
 
 //the DbService class will provide the different methods for data manipulation
 
@@ -45,4 +41,4 @@ class DbService {
 
 }
 
-module.exports = DbService;
+module.exports = {DbService, connection};
