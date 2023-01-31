@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
+const cTable = require("console.table")
 const DbService = require("./classes/DbService")
-const cTable = require('console.table')
 
 console.table([
   {

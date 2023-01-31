@@ -1,4 +1,5 @@
 const mysql = require('mysql2')
+
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -6,9 +7,6 @@ const connection = mysql.createConnection({
   database: "employee_tracker",
   port: 3306
 })
-
-
-
 
 //the DbService class will provide the different methods for data manipulation
 
