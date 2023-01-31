@@ -5,7 +5,11 @@ const Employee = require("./classes/Employee")
 const Department = require("./classes/Department")
 const Roles = require("./classes/Roles")
 const Company = require("./classes/Company")
-
+process.stdin.on("keypress", function (_, key) {
+  if (key.name === "escape") {
+    exit();
+  }
+  });
 // const departments = [
 //   new Department("sales", "1"),
 //   new Department("marketing", "2"),
@@ -26,7 +30,7 @@ const Company = require("./classes/Company")
 const roles =[]
 const departments = []
 const employees = []
-const myCompany = new Company(...roles, ...departments, ...employees)
+// const myCompany = new Company(...roles, ...departments, ...employees)
 
 
 // console.table([
@@ -78,25 +82,32 @@ function addEmployee(){
       .then((choice) => {
         switch (choice.nextAction) {
           case "View all departments":
-            return console.log('this is frustrating')
-            break;
+          console.log('\nview departments has been selected\n')
+          nextAction()
+          break;
           case "View all roles":
-            
-            break;
+          console.log('\nview roles has been selected\n')
+          nextAction()
+          break;
           case "View all employees":
-            exit();
+            console.log('\nview employees has been selected\n')
+            nextAction()
             break;
           case "Add department":
-            exit();
+            console.log('\nadd department has been selected\n')
+            nextAction()
             break;
           case "Add a role":
-            exit();
+            console.log('\nadd role has been selected\n')
+            nextAction()
             break;
           case "Add employee":
-            addEmployee();
+            console.log('\nadd employee has been selected\n')
+            nextAction()
             break;
           case "Update employee":
-            
+            console.log('\nupdate employee has been selected\n')
+            nextAction()
             break;
         }
       });
