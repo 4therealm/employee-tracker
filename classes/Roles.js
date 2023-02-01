@@ -1,14 +1,14 @@
 const Employee = require('./Employee')
-class Roles extends Employee {
-  constructor (role, roleId, depName, salary) {
-    this.role = role,
+class Roles  {
+  constructor (title, roleId, depName, salary) {
+    this.title = title,
     this.roleId = roleId,
     this.depName = depName,
     this.salary = salary
   }
 
   getRole() {
-    return this.jobRole
+    return this.title
   }
   getRoleId() {
     return this.roleId

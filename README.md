@@ -34,3 +34,14 @@ WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 
 ```
+
+
+create employee
+id?
+firstnanme?
+lastname?
+department?
+role?
+
+
+//we will match the department id with an existing one, and determine salary based on that departments salary range

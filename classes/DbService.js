@@ -17,10 +17,7 @@ class DbService {
   }
 
 //async class methods
- getDepartment(){
-  a = 5 + 5;
-  return a
-}
+
   // async getDepartment(){
   //   try{
   //     const response = await new Promise((resolve, reject) => {

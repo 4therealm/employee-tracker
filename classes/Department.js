@@ -1,5 +1,5 @@
-const Employee = require('./Employee')
-class Department extends Employee {
+// const Employee = require('./Employee')
+class Department{
   constructor (depName, depId) {
     this.depName = depName;
     this.depId = depId 
