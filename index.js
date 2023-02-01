@@ -39,10 +39,16 @@ const myCompany = new Company([...roles], [...departments], [...employees])
 
 async function render(func) {
   const result = await new Promise((resolve) => {
-    return resolve(console.table(func))
+    return resolve(`\n${console.table(func)}\n`)
     
   }) 
 }
+async function AddToCompany(func) {
+  const result = await new Promise((resolve) => {
+    return resolve(func)
+  });
+} 
+
 init()
 function init(){
   nextAction()
@@ -78,12 +84,12 @@ function init(){
             nextAction()
             break;
           case "Add department":
-            myCompany.addDepartment()
-            
+           AddToCompany(myCompany.addDepartment())
+           nextAction()
             break;
           case "Add a role":
             myCompany.addRole()
-            nextAction()
+            
             break;
           case "Add employee":
             myCompany.addEmployee()

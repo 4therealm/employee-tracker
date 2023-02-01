@@ -1,6 +1,7 @@
 const inquirer = require('inquirer')
 const Department = require("./Department");
-const questions = require("../questions");
+const Roles = require("./Roles");
+const Employee = require("./Employee");
 const departmentArray = []
 const rolesArray = []
 const employeeArray = []
@@ -73,26 +74,22 @@ class Company {
   addEmployee() {
     inquirer.prompt(empQ).then((answerObj) => {
       const { first_name, last_name, department, role } = answerObj;
-      //the step bollow will be replaced with a function to store in db
       employeeArray.push(new Employee(first_name, last_name, department, role));
       return employeeArray
     });
   }
 
-  async addDepartment() {
-    inquirer.prompt(departmentQ).then((answerObj) => {
+ async addDepartment() {
+  const something = await inquirer.prompt(departmentQ).then((answerObj) => {
       departmentArray.push(new Department(answerObj.depName));
-    nextAction()
     });
+    return something
   }
   addRole() {
     inquirer.prompt(roleQ).then((answerObj) => {
-      //the step bollow will be replaced with a function to store in db
       const { roleName, salary, department } = answerObj;
       rolesArray.push(new Roles(roleName, salary, department));
-      return rolesArray
     });
-    nextAction();
   }
 }
 
