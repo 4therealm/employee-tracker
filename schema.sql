@@ -19,7 +19,8 @@ create table employees(
   title varchar(100),
   department varchar(100),
   salary decimal,
-  manager varchar(30),
+  manager_id int,
+  -- can we make the id equal themselves if they are manager, and if they arent make it represent the manager they report to?
   date_updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   foreign key (department) references departments(d_name),
   foreign key (title) references roles(r_name)
@@ -55,3 +56,11 @@ VALUES ("max", "walters", 1, 2),
   -- VALUES("maxxxxxxxxx", "aaaaaaaaswalt", 3, 3);`, function (err, results) {
   --   console.table(results)
   -- });
+
+
+-- multi joins
+  select e.first_name, e.last_name, r.r_name as title, r.r_salary as salary, d.d_name as department  
+  from employees e
+  inner join roles r on e.e_role_id = r.id
+  inner join departments d on e.e_dep_id = d.id;
+  where d.id = 1;

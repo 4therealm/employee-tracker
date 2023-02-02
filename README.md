@@ -44,4 +44,35 @@ department?
 role?
 
 
+
+
+
+
+
+
 //we will match the department id with an existing one, and determine salary based on that departments salary range
+
+
+
+
+
+
+
+
+
+questions:
+## help understand the rest api interactions
+
+
+
+
+## using prepared statements
+
+## async await
+helping with the functions that communicate with the db, what should be an await
+the problem i am having is once i begin the query questions i am only able to answer one before the query sends. which is fine for departments, but for the other i then get an error
+
+### db class
+how should i incorporate classes into this? making a database class 
+
+

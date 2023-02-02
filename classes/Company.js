@@ -3,7 +3,7 @@ const inquirer = require('inquirer')
 const Roles = require("./Roles");
 
 const dbService = require("./DbService")
-const Connection = require('mysql2/typings/mysql/lib/Connection')
+
 const departmentArray = []
 const rolesArray = []
 const employeeArray = []

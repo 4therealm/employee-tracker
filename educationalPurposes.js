@@ -58,3 +58,38 @@ const roles = [
   new Roles("manager", "5", "marketing", 8000),
   new Roles("employee", "6", "marketing", 8000)
 ]
+
+
+case "Add employee":
+  // const empQuery =
+  //   "INSERT INTO employees (first_name, last_name, e_role_id, e_dep_id) VALUES (?, ?, ?, ?);";
+  // const empResults = connection.query(empQuery, [answer.first_name, answers.last_name, answers.e_role_id, answers.e_dep_id], (err, result) => {
+  //   err ? console.log(err) : console.log(empResults);
+  // });
+  break;
+
+  break;
+  case "Add department":
+    const depQuery = "INSERT INTO departments (d_name) VALUES (?);";
+    const depResults = connection.query(depQuery, [answer.d_name], (err, result) => {
+      err ? console.log(err) : console.log(depResults);
+    });
+    break;
+  case "Add a role":
+    const roleQuery =
+      "INSERT INTO roles (r_name, r_salary) VALUES (?,?);";
+    const roleResults = connection.query(roleQuery, [answer.r_name, answer.r_salary], (err, result) => {
+      err ? console.log(err) : console.log(roleResults);
+    });
+    break;
+
+
+
+
+
+
+    // questions
+    /* 
+    -
+    
+    */

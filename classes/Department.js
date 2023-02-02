@@ -1,14 +1,11 @@
 
 class Department{
-  constructor (depName, depId) {
+  constructor (depName) {
     this.depName = depName;
-    this.depId = depId 
+
   }
 
   getDepName() {
-    return this.depName
-  }
-  getDepId() {
     return this.depName
   }
 }
