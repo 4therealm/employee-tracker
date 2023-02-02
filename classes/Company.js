@@ -2,6 +2,7 @@ const inquirer = require('inquirer')
 const Department = require("./Department");
 const Roles = require("./Roles");
 const Employee = require("./Employee");
+const dbService = require("./DbService")
 const departmentArray = []
 const rolesArray = []
 const employeeArray = []
@@ -64,18 +65,23 @@ class Company {
   showRoles() {
     return this.roles;
   }
-  showDepartments() {
-    return this.departments;
+  showDepartment() {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.getDepartment();
+    return result
   }
   showEmployees() {
     return this.employees;
   }
-
+//we will need to convert the answer value into a number
   addEmployee() {
     inquirer.prompt(empQ).then((answerObj) => {
       const { first_name, last_name, department, role } = answerObj;
-      employeeArray.push(new Employee(first_name, last_name, department, role));
-      return employeeArray
+      db.query(`'INSERT INTO company_db.employees (${first_name}, ${last_name}, ${role}, ${department}) '`, function (err, results) {
+        console.table(results)
+      });
+      ;
     });
   }
 

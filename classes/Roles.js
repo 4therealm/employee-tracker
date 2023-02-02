@@ -1,9 +1,8 @@
 const Employee = require('./Employee')
 class Roles  {
-  constructor (title, roleId, depName, salary) {
+  constructor (title, department, salary) {
     this.title = title,
-    this.roleId = roleId,
-    this.depName = depName,
+    this.depName = department,
     this.salary = salary
   }
 

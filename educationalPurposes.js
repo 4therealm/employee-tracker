@@ -27,3 +27,14 @@ console.table([tyrone, janet, maria], ["firstName"]);
 
 table(data)
 table(data, columns)
+
+
+
+//mysql2
+`use employee_tracker;
+CREATE TABLE department (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255),
+  PRIMARY KEY(id)
+
+)`

@@ -1,10 +1,7 @@
-/*
-WHEN I choose to view all employees
-THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-*/
+
 
 class Employee {
-  constructor ( id, firstName, lastName, department, role) {
+  constructor ( id, firstName, lastName, role, department) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;

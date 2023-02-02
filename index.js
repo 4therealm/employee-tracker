@@ -5,7 +5,24 @@ const Employee = require("./classes/Employee")
 const Department = require("./classes/Department")
 const Roles = require("./classes/Roles")
 const Company = require("./classes/Company")
+const mysql = require('mysql2')
 
+const db = mysql.createConnection(
+  {
+    host: 'localhost',
+    // MySQL username,
+    user: 'root',
+    // MySQL password
+    password: 'password',
+    database: 'company_db'
+  },
+  console.log(`Connected to the classlist_db database.`)
+);
+
+// Query database
+// db.query('SELECT * FROM employees', function (err, results) {
+//   console.log(results);
+// });
 
 
 
@@ -51,7 +68,10 @@ async function AddToCompany(func) {
 
 init()
 function init(){
-  nextAction()
+  db.query(`INSERT INTO employees(first_name, last_name, e_role_id, e_dep_id) 
+  VALUES("maxxxxxxxxx", "aaaaaaaaswalt", 3, 3);`, function (err, results) {
+    console.table(results)
+  });
 }
 
   function nextAction() {
@@ -72,16 +92,21 @@ function init(){
       .then((choice) => {
         switch (choice.nextAction) {
           case "View all departments":
-            render(myCompany.showDepartments()) 
-            nextAction()         
+            db.query('SELECT * FROM company_db.departments', function (err, results) {
+              console.table(results)
+            });
+            // render(myCompany.showDepartment()) 
+            // nextAction()         
             break;
           case "View all roles":
-            render(myCompany.showRoles())
-            nextAction()
+            db.query('SELECT * FROM company_db.roles', function (err, results) {
+              console.table(results)
+            });
             break;
           case "View all employees":
-            render(myCompany.showEmployees())
-            nextAction()
+            db.query('SELECT * FROM company_db.employees', function (err, results) {
+              console.table(results)
+            });
             break;
           case "Add department":
            AddToCompany(myCompany.addDepartment())
@@ -92,8 +117,8 @@ function init(){
             
             break;
           case "Add employee":
-            myCompany.addEmployee()
-            nextAction()
+            
+            new Employee(first_name, last_name, roles, departments)
             break;
         }
       });

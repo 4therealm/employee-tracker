@@ -1,4 +1,4 @@
-// const Employee = require('./Employee')
+
 class Department{
   constructor (depName, depId) {
     this.depName = depName;
