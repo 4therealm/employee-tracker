@@ -51,5 +51,7 @@ VALUES ("max", "walters", 1, 2),
 -- THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 
 
-INSERT INTO employees()
-VALUES(value_list);
+  -- db.query(`INSERT INTO employees(first_name, last_name, e_role_id, e_dep_id) 
+  -- VALUES("maxxxxxxxxx", "aaaaaaaaswalt", 3, 3);`, function (err, results) {
+  --   console.table(results)
+  -- });

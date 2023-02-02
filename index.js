@@ -6,6 +6,7 @@ const Department = require("./classes/Department")
 const Roles = require("./classes/Roles")
 const Company = require("./classes/Company")
 const mysql = require('mysql2')
+const CompanyDb=require("./classes/DbService")
 
 const db = mysql.createConnection(
   {
@@ -19,11 +20,6 @@ const db = mysql.createConnection(
   console.log(`Connected to the classlist_db database.`)
 );
 
-// Query database
-// db.query('SELECT * FROM employees', function (err, results) {
-//   console.log(results);
-// });
-
 
 
 
@@ -33,43 +29,67 @@ process.stdin.on("keypress", function (_, key) {
   }
   });
 
-  const departments = [
-  new Department("sales", "1"),
-  new Department("marketing", "2"),
-  new Department("customer service", "3")
-]
-const employees = [
-  new Employee(11, "max", "walters", "sales", "manager"),
-  new Employee(12, "rob", "davidson", "sales", "employee"),
-  new Employee(13, "jacy", "hohan", "marketing", "manager"),
-  new Employee(14, "isia", "bleep", "marketing", "employee"),
-  new Employee(15, "sam", "sdf", "customer service", "manager"),
-  new Employee(16, "benny", "kalli", "customer service", "employee")
-]
-const roles = [
-  new Roles("manager", "5", "marketing", 8000),
-  new Roles("employee", "6", "marketing", 8000)
-]
-
-
-const myCompany = new Company([...roles], [...departments], [...employees])
-
-async function render(func) {
-  const result = await new Promise((resolve) => {
-    return resolve(`\n${console.table(func)}\n`)
+  async function prepareQuery(input){
+    try {
+      const result = await new Promise((resolve, reject) => {
+        (CompanyDb.dbInstance()).SelectFrom("*", `${input}`);
+       resolve(console.table(result))
+       })  
+    } catch (error) {
+      console.log("🚀 ~ file: test.js:53 ~ prepareQuery ~ error", error)
+      
+    }
     
-  }) 
-}
-async function AddToCompany(func) {
-  const result = await new Promise((resolve) => {
-    return resolve(func)
-  });
-} 
+  }
+
+  function userChooses(){
+    inquirer
+    .prompt( {
+      type: "list",
+      name: "nextAction",
+      message: "What would you like to do?",
+      choices: [
+        "View all departments",
+        "View all roles",
+        "View all employees",
+        "Add department",
+        "Add a role",
+        "Add employee",
+        "Update employee"],
+    })
+    .then((choice) => {
+      switch (choice.nextAction) {
+        case "View all departments":
+          prepareQuery("departments")
+          break;
+        case "View all roles":
+          prepareQuery("roles")
+          break;
+        case "View all employees":
+          prepareQuery("employees")
+          break;
+        case "Add department":
+          
+          break;
+        case "Add a role":
+          
+          break;
+        case "Add employee":
+          
+          break;
+      }
+  })
+  }
+
+
+
+
+
 
 init()
 function init(){
   db.query(`INSERT INTO employees(first_name, last_name, e_role_id, e_dep_id) 
-  VALUES("maxxxxxxxxx", "aaaaaaaaswalt", 3, 3);`, function (err, results) {
+  VALUES("${first_name}", "${last_name}", "${department}", "${role}");`, function (err, results) {
     console.table(results)
   });
 }
@@ -92,11 +112,9 @@ function init(){
       .then((choice) => {
         switch (choice.nextAction) {
           case "View all departments":
-            db.query('SELECT * FROM company_db.departments', function (err, results) {
-              console.table(results)
-            });
-            // render(myCompany.showDepartment()) 
-            // nextAction()         
+                const db = CompanyDb.dbInstance();
+                const result = db.SelectFrom()
+                console.table(result)
             break;
           case "View all roles":
             db.query('SELECT * FROM company_db.roles', function (err, results) {

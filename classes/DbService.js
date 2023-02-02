@@ -1,122 +1,71 @@
-const mysql = require('mysql2');
-
+const mysql = require("mysql2");
 let instance = null;
 
-
 const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "password",
-    database: "employee_tracker",
-    port: 3306
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "employee_tracker",
+  port: 3306,
 });
 
 connection.connect((err) => {
-    if (err) {
-        console.log(err.message);
-    }
-    console.log('db ' + connection.state);
+  if (err) {
+    console.log(err.message);
+  }
+  console.log("db " + connection.state);
 });
 
+class CompanyDb {
+  static dbInstance() {
+    return instance ? instance : new CompanyDb();
+  }
+  //im guessing instance is boolean meta data related to a current connection
 
-// class DbService {
-//   //making static value prevent its from repeating
-//     static getDbServiceInstance() {
-//         return instance ? instance : new DbService();
-//     }
+  async SelectFrom(tbl, col) {
+    try {
+      const response = await new Promise((resolve, reject) => {
+        const query = `"SELECT ${col} FROM ${tbl};"`;
 
-//     async getDepartmentData() {
-//         try {
-//             const response = await new Promise((resolve, reject) => {
-//                 const query = "SELECT * FROM department;";
+        connection.query(query, (err, res) => {
+          if (err) reject(new Error(err.message));
+          resolve(res);
+        });
+      });
+      return response;
+    } catch (error) {
+      console.log("🚀 ~ file: Company.js:116 ~ getQuery ~ error", error);
+    }
+  }
 
-//                 connection.query(query, (err, results) => {
-//                     if (err) reject(new Error(err.message));
-//                     resolve(results);
-//                 })
-//             });
-//             // console.log(response);
-//             return response;
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
+  async insertInto(table, val) {
+    let query = "";
+    let values = [val];
+    try {
+      switch (table) {
+        case "departments":
+          query = "INSERT INTO departments (d_name) VALUES (?);";
+          break;
+        case "roles":
+          query = "INSERT INTO roles (r_name, r_salary) VALUES (?, ?);";
+          break;
+        case "employees":
+          query =
+            "INSERT INTO employees (first_name, last_name, title, department) VALUES (?, ?, ?, ?);";
+          break;
+      }
+      const response = await new Promise((resolve, reject) => {
+        connection.query(query, [...values], (err, result) => {
+          err ? reject(new Error(err.message)) : resolve(result);
+        });
+      });
+    } catch (err) {
+      console.log(
+        "🚀 ~ file: DbService.js:72 ~ CompanyDb ~ insertInto ~ err",
+        err
+      );
+    }
+  }
+}
 
-
-//     async insertNewName(name) {
-//         try {
-//             const dateAdded = new Date();
-//             const insertId = await new Promise((resolve, reject) => {
-//                 const query = "INSERT INTO names (name, date_added) VALUES (?,?);";
-
-//                 connection.query(query, [name, dateAdded] , (err, result) => {
-//                     if (err) reject(new Error(err.message));
-//                     resolve(result.insertId);
-//                 })
-//             });
-//             return {
-//                 id : insertId,
-//                 name : name,
-//                 dateAdded : dateAdded
-//             };
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-
-//     async deleteRowById(id) {
-//         try {
-//             id = parseInt(id, 10); 
-//             const response = await new Promise((resolve, reject) => {
-//                 const query = "DELETE FROM names WHERE id = ?";
-    
-//                 connection.query(query, [id] , (err, result) => {
-//                     if (err) reject(new Error(err.message));
-//                     resolve(result.affectedRows);
-//                 })
-//             });
-    
-//             return response === 1 ? true : false;
-//         } catch (error) {
-//             console.log(error);
-//             return false;
-//         }
-//     }
-
-//     async updateNameById(id, name) {
-//         try {
-//             id = parseInt(id, 10); 
-//             const response = await new Promise((resolve, reject) => {
-//                 const query = "UPDATE names SET name = ? WHERE id = ?";
-    
-//                 connection.query(query, [name, id] , (err, result) => {
-//                     if (err) reject(new Error(err.message));
-//                     resolve(result.affectedRows);
-//                 })
-//             });
-    
-//             return response === 1 ? true : false;
-//         } catch (error) {
-//             console.log(error);
-//             return false;
-//         }
-//     }
-
-//     async searchByName(name) {
-//         try {
-//             const response = await new Promise((resolve, reject) => {
-//                 const query = "SELECT * FROM names WHERE name = ?;";
-
-//                 connection.query(query, [name], (err, results) => {
-//                     if (err) reject(new Error(err.message));
-//                     resolve(results);
-//                 })
-//             });
-
-//             return response;
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-// }
-// module.exports = DbService
+module.exports = CompanyDb

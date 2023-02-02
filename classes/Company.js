@@ -1,8 +1,9 @@
 const inquirer = require('inquirer')
-const Department = require("./Department");
+
 const Roles = require("./Roles");
-const Employee = require("./Employee");
+
 const dbService = require("./DbService")
+const Connection = require('mysql2/typings/mysql/lib/Connection')
 const departmentArray = []
 const rolesArray = []
 const employeeArray = []
@@ -75,21 +76,26 @@ class Company {
     return this.employees;
   }
 //we will need to convert the answer value into a number
-  addEmployee() {
-    inquirer.prompt(empQ).then((answerObj) => {
+ addEmployee() {
+    inquirer.prompt(empQ)
+    .then(async (answerObj) => {
       const { first_name, last_name, department, role } = answerObj;
-      db.query(`'INSERT INTO company_db.employees (${first_name}, ${last_name}, ${role}, ${department}) '`, function (err, results) {
-        console.table(results)
-      });
-      ;
+      const result = await db.query(`'INSERT INTO company_db.employees (${first_name}, ${last_name}, ${department}, ${role})'`, function (err, results) {
+         return console.table(result)
+    });
+     
     });
   }
 
- async addDepartment() {
-  const something = await inquirer.prompt(departmentQ).then((answerObj) => {
-      departmentArray.push(new Department(answerObj.depName));
-    });
-    return something
+ addDepartment() {
+  inquirer.prompt(depQ)
+  .then(async (answerObj) => {
+        const result = await db.query(`'INSERT INTO company_db.departments (d_name)
+        values ("${answerObj.depName}")'`, function (err, results) {
+       return console.table(result)
+  });
+   
+  });
   }
   addRole() {
     inquirer.prompt(roleQ).then((answerObj) => {
@@ -100,3 +106,23 @@ class Company {
 }
 
 module.exports = Company
+
+let instance = null;
+
+
+async function SelectFrom(tbl, col) {
+  try {
+       const response = await new Promise((resolve, reject) => {
+          const query = `"SELECT ${tbl} FROM ${col};"`
+
+          connection.query(query, (err, res) => {
+            if (err) reject(new Error(err.message));
+            resolve(res)         
+        })
+    });
+    return response
+} catch (error) {
+    console.log("🚀 ~ file: Company.js:116 ~ getQuery ~ error", error)
+  
+}
+}
