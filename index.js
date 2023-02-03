@@ -174,25 +174,17 @@ async function addDepartment() {
       message: "what is the name of the department?",
     }).then(answer => {    
     const depQuery = "INSERT INTO departments (d_name) VALUES (?);"
-    const result = connection.promise().execute(depQuery, [answer.dep_name], function(err, results, fields) {
-      console.log(results); // results contains rows returned by server
-      console.log(fields); // fields contains extra meta data about results, if available
-  
-      // If you execute same statement again, it will be picked from a LRU cache
-      // which will save query preparation time and give better performance
-    })
-    console.log("🚀 ~ file: index.js:179 ~ addDepartment ~ result", result)
+    const result = connection.promise().execute(depQuery, [answer.dep_name])
   
   });
       
-  } catch (err) {
+ userChooses() } catch (err) {
     console.log(err);
   }
 }
 async function addRole() {
  try {
    const departmentsResult = await connection.promise().query("SELECT d_name, id FROM company_db.departments");
-    console.log("🚀 ~ file: index.js:188 ~ addRole ~ departmentsResult", departmentsResult)
     const depArr = departmentsResult[0].map((dep) => ({
       name: dep.d_name,
       value: dep.id,
@@ -221,68 +213,5 @@ async function addRole() {
     console.table(result);
   } catch (err) {
     console.log(err);
-  }
+  } userChooses()
 }
-
-
-
-// function addDepartment() {
-//   inquirer
-//     .prompt({
-//       type: "input",
-//       name: "dep_name",
-//       message: "what is the name of the department?",
-//     })
-//     .then((answer) => {
-//       // console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer)
-//       const depQuery = "INSERT INTO departments (d_name) VALUES (?);";
-//       const depResults = connection.query(
-//         depQuery,
-//         `${answer.dep_name}`,
-//         (err, result) => {
-//           err ? console.log(err) : console.table(result);
-//         }
-//       );
-//     });
-// }
-// async function addRole() {
-//   const departmentsResult = await connection.query("SELECT * FROM company_db.departments");
-//   const dArr = departmentsResult.map((dep) => ({
-//     name: dep.d_name,
-//     value: dep.id,
-//   }));
-//   const result = await inquirer
-//     .prompt([
-//       {
-//         type: "input",
-//         name: "r_name",
-//         message: "what is the name of the role?",
-//       },
-//       {
-//         type: "input",
-//         name: "r_salary",
-//         message: "what is the salary for that position?",
-//       },
-//       {
-//         type: "list",
-//         name: "dep_id",
-//         message: "What department is it in?",
-//         choices: dArr
-//       },
-//     ])
-//     .then((answer) => {
-//       const { r_name, r_salary, dep_id } = answer;
-//       console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer);
-//       const roleQuery =
-//         "INSERT INTO roles (r_name, salary, dep_id) VALUES (?, ?, ?);";
-//       const roleResults = connection.query(
-//         roleQuery,
-//         [r_name, r_salary, dep_id],
-//         (err, result) => {
-//           err ? console.log(err) : console.table(result);
-//           // second arg must be an array
-//         }
-//       );
-//     });
-// }
-
