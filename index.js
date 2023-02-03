@@ -119,12 +119,12 @@ async function viewRoles() {
 async function addEmployee() {
   try {
     const rolesResult = await connection.promise().query("SELECT * FROM company_db.roles");
-    const departmentsResult = await connection.promise().query("SELECT * FROM company_db.departments");
-    const rolesArr = rolesResult.map((role) => ({
+    const employeeResult = await connection.promise().query("SELECT * FROM company_db.employees");
+    const rolesArr = rolesResult[0].map((role) => ({
       name: role.r_name,
       value: role.id,
     }));
-    const empArr = departmentsResult.map((emp) => ({
+    const empArr = employeeResult[0].map((emp) => ({
       name: emp.first_name + " " + emp.last_name,
       value: emp.id
     }));
@@ -174,7 +174,13 @@ async function addDepartment() {
       message: "what is the name of the department?",
     }).then(answer => {    
     const depQuery = "INSERT INTO departments (d_name) VALUES (?);"
-    const result = connection.promise().query(depQuery, answer.dep_name)
+    const result = connection.promise().execute(depQuery, [answer.dep_name], function(err, results, fields) {
+      console.log(results); // results contains rows returned by server
+      console.log(fields); // fields contains extra meta data about results, if available
+  
+      // If you execute same statement again, it will be picked from a LRU cache
+      // which will save query preparation time and give better performance
+    })
     console.log("🚀 ~ file: index.js:179 ~ addDepartment ~ result", result)
   
   });
@@ -210,10 +216,7 @@ async function addRole() {
     },
   ]);
   const { r_name, r_salary, dep_id } = answers;
-  console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answers);
-  const roleQuery =
-    "INSERT INTO roles (r_name, salary, dep_id) VALUES (?, ?, ?);";
-  
+  const roleQuery = "INSERT INTO roles (r_name, salary, dep_id) VALUES (?, ?, ?);";
     const [result] = await connection.promise().execute(roleQuery, [r_name, r_salary, dep_id]);
     console.table(result);
   } catch (err) {
