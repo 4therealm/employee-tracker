@@ -64,7 +64,7 @@ questions:
 ## help understand the rest api interactions
 
 
-
+## understanding table joins
 
 ## using prepared statements
 

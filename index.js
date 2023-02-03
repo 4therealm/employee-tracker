@@ -1,15 +1,9 @@
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-// const DbService = require("./classes/DbService")
-// const Employee = require("./classes/Employee")
-// const Department = require("./classes/Department")
-// const Roles = require("./classes/Roles")
-// const Company = require("./classes/Company")
 const mysql = require("mysql2");
-const CompanyDb = require("./classes/DbService");
-const depArr = [];
-const roleArr = [];
-const employee = [];
+const mysqlPromise = require("mysql2/promise");
+
+
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -25,12 +19,8 @@ connection.connect((err) => {
   console.log("db " + connection.state);
 });
 
-function prepareQuery(input) {
-  db.query(`'SELECT * FROM classlist_db.${input}'`, function (err, results) {
-    console.log("🚀 ~ file: server.js:27 ~ results", results);
-  });
-}
 
+// addRole()
 userChooses();
 function userChooses() {
   inquirer
@@ -45,112 +35,251 @@ function userChooses() {
         "Add department",
         "Add a role",
         "Add employee",
-        "Update employee",
+        // "Update employee",
       ],
     })
     .then((choice) => {
       switch (choice.nextAction) {
         case "View all departments":
-          connection.query(
-            "SELECT * FROM company_db.departments",
-            function (err, results) {
-              console.table(results);
-              userChooses();
-            }
-          );
+          viewDepartments();
           break;
         case "View all roles":
-          connection.query(
-            "SELECT * FROM company_db.roles",
-            function (err, results) {
-              console.table(results);
-              userChooses();
-            }
-          );
+          viewRoles();
           break;
         case "View all employees":
-          connection.query(
-            "SELECT * FROM company_db.employees",
-            function (err, results) {
-              console.table(results);
-              userChooses();
-            }
-          );
+          viewEmployees();
           break;
         case "Add department":
-            addDepartment()
+          addDepartment();
           break;
         case "Add a role":
-            addRole()
+          addRole();
           break;
         case "Add employee":
-            addEmployee()
+          addEmployee();
           break;
       }
     });
 }
 
-function selectFrom(col, tbl){
-  connection.query(
-    "SELECT * FROM company_db.departments",
-    function (err, results) {
-      console.table(results);
-      userChooses();
-    }
-  );
+
+async function viewDepartments() {
+  try {
+    const query = `SELECT id as 'Department Id', d_name as Department
+      FROM company_db.departments;`;
+    const results = await new Promise((resolve, reject) => {
+      connection.query(query, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+    console.table(results);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    userChooses();
+  }
 }
 
 
-function addDepartment() {
-  inquirer.prompt(
-    {
-      type: "input", name: "dep_name", message: "what is the name of the department?"
-    })
-  .then((answer) => {
-    // console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer)
-    const depQuery = "INSERT INTO departments (d_name) VALUES (?);";
-    const depResults = connection.query(depQuery, `${answer.dep_name}`, (err, result) => {
-      err ? console.log(err) : console.table(result);
-    });
+
+
+async function viewEmployees() {
+  try {
+    const results = await connection.promise().query(
+      `select e.id AS Id, first_name AS 'first name',last_name AS 'last name', r.r_name AS Title , d.d_name AS Department, r.salary AS Salary , e.manager_id AS 'Manager Id'  
+  from employees e
+  inner join roles r on e.role_id = r.id
+  inner join departments d on e.manager_id = r.id;`
+    );
+    console.table(results[0]);
+    userChooses();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// 
+async function viewRoles() {
+  try {
+    const results = await connection.promise().query(`
+      SELECT  id as Id, r_name as Title, dep_id as Department, salary as Salary
+      FROM company_db.roles;
+    `);
+    console.table(results[0]);
+    userChooses();
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function addEmployee() {
+  try {
+    const rolesResult = await connection.promise().query("SELECT * FROM company_db.roles");
+    const departmentsResult = await connection.promise().query("SELECT * FROM company_db.departments");
+    const rolesArr = rolesResult.map((role) => ({
+      name: role.r_name,
+      value: role.id,
+    }));
+    const empArr = departmentsResult.map((emp) => ({
+      name: emp.first_name + " " + emp.last_name,
+      value: emp.id
+    }));
+    empArr.push({ name: "none", value: null });
+    const answer = await inquirer.prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "First name?",
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "Last name?",
+      },
+      {
+        type: "list",
+        name: "role_name",
+        message: "what is their position?",
+        choices: rolesArr,
+      },
+      {
+        type: "list",
+        name: "manager",
+        message: "who is their manager?",
+        choices: empArr,
+      },
+    ]);
+    console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer);
+    const { first_name, last_name, role_name, manager } = answer;
+    const empQuery = "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);";
+    const [result] = await connection.promise().query(empQuery, [first_name, last_name, role_name, manager]);
+    console.table(result);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    userChooses();
+  }
+}
+
+
+async function addDepartment() {
+    try {
+    const answer = await inquirer.prompt({
+      type: "input",
+      name: "dep_name",
+      message: "what is the name of the department?",
+    }).then(answer => {    
+    const depQuery = "INSERT INTO departments (d_name) VALUES (?);"
+    const result = connection.promise().query(depQuery, answer.dep_name)
+    console.log("🚀 ~ file: index.js:179 ~ addDepartment ~ result", result)
+  
   });
+      
+  } catch (err) {
+    console.log(err);
+  }
 }
 async function addRole() {
-  const result = await inquirer.prompt(
+ try {
+   const departmentsResult = await connection.promise().query("SELECT d_name, id FROM company_db.departments");
+    console.log("🚀 ~ file: index.js:188 ~ addRole ~ departmentsResult", departmentsResult)
+    const depArr = departmentsResult[0].map((dep) => ({
+      name: dep.d_name,
+      value: dep.id,
+    }));
+  const answers = await inquirer.prompt([
     {
-      type: "input", name: "r_name", message: "what is the name of the role?"
+      type: "input",
+      name: "r_name",
+      message: "what is the name of the role?",
     },
     {
-      type: "input", name: "r_salary", message: "what is the salary for that position?"
-    })
-  .then((answer) => {
-    const {r_name, r_salary} = answer
-    console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer)
-    const roleQuery = "INSERT INTO roles (r_name, r_salary) VALUES (?, ?);";
-    const roleResults = connection.query(depQuery, `${r_name}, ${r_salary}`, (err, result) => {
-      err ? console.log(err) : console.table(result);
-    });
-  });
+      type: "input",
+      name: "r_salary",
+      message: "what is the salary for that position?",
+    },
+    {
+      type: "list",
+      name: "dep_id",
+      message: "What department is it in?",
+      choices: depArr
+    },
+  ]);
+  const { r_name, r_salary, dep_id } = answers;
+  console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answers);
+  const roleQuery =
+    "INSERT INTO roles (r_name, salary, dep_id) VALUES (?, ?, ?);";
+  
+    const [result] = await connection.promise().execute(roleQuery, [r_name, r_salary, dep_id]);
+    console.table(result);
+  } catch (err) {
+    console.log(err);
+  }
 }
-function addEmployee() {
-  inquirer.prompt(
-    {
-      type: "input", name: "first_name", message: "First name?"
-    },
-    {
-      type: "input", name: "last_name", message: "Last name?"
-    },
-    {
-      type: "select", name: "role_name", message: "what is their position?", choices: [...roleArr]
-    },
-    {
-      type: "select", name: "dep_name", message: "in what department?", choices: [...depArr]
-    })
-  .then((answer) => {
-    const {first_name, last_name, role_name, dep_name} = answer
-    console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer)
-    const depQuery = "INSERT INTO departments (first_name, last_name, e_role_id, e_dep_id) VALUES (?, ?, ?, ?);";
-    const depResults = connection.query(depQuery, [`${first_name}, ${last_name}, ${role_name}, ${dep_name} `], (err, result) => {
-      err ? console.log(err) : console.table(result);
-    });
-  });
-}
+
+
+
+// function addDepartment() {
+//   inquirer
+//     .prompt({
+//       type: "input",
+//       name: "dep_name",
+//       message: "what is the name of the department?",
+//     })
+//     .then((answer) => {
+//       // console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer)
+//       const depQuery = "INSERT INTO departments (d_name) VALUES (?);";
+//       const depResults = connection.query(
+//         depQuery,
+//         `${answer.dep_name}`,
+//         (err, result) => {
+//           err ? console.log(err) : console.table(result);
+//         }
+//       );
+//     });
+// }
+// async function addRole() {
+//   const departmentsResult = await connection.query("SELECT * FROM company_db.departments");
+//   const dArr = departmentsResult.map((dep) => ({
+//     name: dep.d_name,
+//     value: dep.id,
+//   }));
+//   const result = await inquirer
+//     .prompt([
+//       {
+//         type: "input",
+//         name: "r_name",
+//         message: "what is the name of the role?",
+//       },
+//       {
+//         type: "input",
+//         name: "r_salary",
+//         message: "what is the salary for that position?",
+//       },
+//       {
+//         type: "list",
+//         name: "dep_id",
+//         message: "What department is it in?",
+//         choices: dArr
+//       },
+//     ])
+//     .then((answer) => {
+//       const { r_name, r_salary, dep_id } = answer;
+//       console.log("🚀 ~ file: index.js:108 ~ .then ~ answer", answer);
+//       const roleQuery =
+//         "INSERT INTO roles (r_name, salary, dep_id) VALUES (?, ?, ?);";
+//       const roleResults = connection.query(
+//         roleQuery,
+//         [r_name, r_salary, dep_id],
+//         (err, result) => {
+//           err ? console.log(err) : console.table(result);
+//           // second arg must be an array
+//         }
+//       );
+//     });
+// }
+
