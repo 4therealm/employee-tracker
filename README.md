@@ -1,4 +1,13 @@
-# employee-tracker
+# Employee Tracker
+A CLI run application for tracking and adding departments, roles and employees.
+
+
+## Description
+* Assignment: #12  
+* Due: 2/5/2023  
+* Repo: https://github.com/4therealm/employee-tracker 
+* Demo: https://watch.screencastify.com/v/Li69Ja22vjYlUzBcCFpd
+* Screenshot: <img src="/Capture.PNG" alt="console table display of db information">
 
 ```
 AS A business owner
@@ -32,47 +41,9 @@ THEN I am prompted to enter the employee’s first name, last name, role, and ma
 
 WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database
-
 ```
+## Installation 
+ ```
+ npm install
 
-
-create employee
-id?
-firstnanme?
-lastname?
-department?
-role?
-
-
-
-
-
-
-
-
-//we will match the department id with an existing one, and determine salary based on that departments salary range
-
-
-
-
-
-
-
-
-
-questions:
-## help understand the rest api interactions
-
-
-## understanding table joins
-
-## using prepared statements
-
-## async await
-helping with the functions that communicate with the db, what should be an await
-the problem i am having is once i begin the query questions i am only able to answer one before the query sends. which is fine for departments, but for the other i then get an error
-
-### db class
-how should i incorporate classes into this? making a database class 
-
-
+ ```

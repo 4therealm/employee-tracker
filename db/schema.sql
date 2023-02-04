@@ -12,8 +12,7 @@ create table roles (
   salary decimal,
   dep_id int not null,
   date_updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  foreign key (dep_id)
-  references departments(id)
+  foreign key (dep_id) references departments(id)
 );
 create table employees(
   id int auto_increment primary key,
@@ -21,8 +20,6 @@ create table employees(
   last_name varchar(30),
   role_id int not null,
   manager_id int,
-  -- can we make the id equal themselves if they are manager, and if they arent make it represent the manager they report to?
   date_updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   foreign key (role_id) references roles(id),
-  foreign key (manager_id) references employees(id)
 );
